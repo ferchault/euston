@@ -4,3 +4,4 @@
 
 FileIO and geometry functions for analysis of quantum chemical simulations mostly to work with CP2K
 
+The documentation can be found <a href="http://ferchault.github.io/euston/">here</a>.
