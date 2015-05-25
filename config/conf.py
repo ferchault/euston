@@ -18,7 +18,8 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+sys.path.append(os.path.abspath('../src'))
+sys.path.append(os.path.abspath('../src/tools'))
 
 # -- General configuration ------------------------------------------------
 
@@ -30,7 +31,7 @@ import os
 # ones.
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx.ext.coverage',
+#    'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
 ]
 
@@ -44,11 +45,11 @@ source_suffix = '.rst'
 #source_encoding = 'utf-8-sig'
 
 # The master toctree document.
-master_doc = 'index'
+master_doc = 'src/index'
 
 # General information about the project.
 project = u'euston'
-copyright = u'2014, Guido Falk von Rudorff'
+copyright = u'2015, Guido Falk von Rudorff'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
