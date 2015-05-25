@@ -11,4 +11,5 @@ script:
   - cd ..
   - make html
 after_script:
+  - cd src
   - coveralls
