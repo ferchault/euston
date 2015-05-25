@@ -389,12 +389,18 @@ class CubeFile(FileIO):
     @require_loaded
     @require_parsed
     def get_coordinates(self):
-        return self._coordinates
+        return np.copy(self._coordinates)
 
     @require_loaded
     @require_parsed
     def set_coordinates(self, coord):
-        if coord.shape != self._coordinates.shape:
+        try:
+            this_shape = coord.shape
+        except:
+            # not a numpy array
+            coord = np.array(coord).reshape((-1, 3))
+            this_shape = coord.shape
+        if this_shape != self._coordinates.shape:
             raise ValueError('Changing coordinate shape not implemented.')
 
         self._coordinates = np.copy(coord)
@@ -509,7 +515,6 @@ class CubeFile(FileIO):
                     count += 1
         except:
             raise
-            raise ValueError('Unable to parse voxel data.')
         if count != len(self._data):
             raise ValueError('Truncated voxel data.')
 

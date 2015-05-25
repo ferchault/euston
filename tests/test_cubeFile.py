@@ -53,11 +53,27 @@ adv1 = '''-Quickstep-
   '''
 adv1 += '1 ' * 1000
 
-class TestCubeFile(TestCase):
-        def test_parse_error(self):
-            fh = StringIO.StringIO(simple3)
-            self.assertRaises(IndexError, CubeFile, filehandle=fh)
+simple5 = '''HEADER 1
+HEADER 2
+1 0 0 0
+-2 1 0 0
+-2 0 1 0
+-1 0 0 1
+12 0 1 2 3
+1 -2 3 -4
+'''
 
+simple6 = '''HEADER 1
+HEADER 2
+1 0 0 0
+1 1 0 0
+1 0 1 0
+5 0 0 1
+12 0 0 0 0
+1 1 1 1 1'''
+
+
+class TestCubeFile(TestCase):
         def test_atom_count(self):
             fh = StringIO.StringIO(simple)
             cube = CubeFile(filehandle=fh)
@@ -133,3 +149,71 @@ class TestCubeFile(TestCase):
             self.assertEqual(cube.get_xlen(), cube2.get_xlen())
             self.assertEqual(cube.get_ylen(), cube2.get_ylen())
             self.assertEqual(cube.get_zlen(), cube2.get_zlen())
+
+            fh = StringIO.StringIO(simple6)
+            cube = CubeFile(filehandle=fh)
+            s = cube.to_string()
+            self.assertEqual(s[-2], '1.000000e+00 1.000000e+00 1.000000e+00 1.000000e+00 1.000000e+00')
+
+        def test_getcoordinates(self):
+            fh = StringIO.StringIO(simple4)
+            cube = CubeFile(filehandle=fh)
+
+            # get copy of coordinates?
+            coord = cube.get_coordinates()
+            coord += 1
+            self.assertTrue(np.all(coord == cube.get_coordinates()+1))
+
+        def test_setcoordinates(self):
+            fh = StringIO.StringIO(simple4)
+            cube = CubeFile(filehandle=fh)
+            coord = cube.get_coordinates()
+            numentries = np.prod(np.array(coord.shape))
+
+            self.assertRaises(ValueError, cube.set_coordinates, cube.get_coordinates().T)
+            self.assertRaises(ValueError, cube.set_coordinates, list(np.zeros(numentries-1)))
+            self.assertRaises(ValueError, cube.set_coordinates, list(np.zeros(numentries+1)))
+            try:
+                cube.set_coordinates(list(np.zeros(numentries)))
+            except:
+                self.fail('Lists not accepted')
+
+        def test_getprojection(self):
+            fh = StringIO.StringIO(simple5)
+            cube = CubeFile(filehandle=fh)
+
+            self.assertEqual(cube.get_projection(2, absolute=False)[0], -2)
+            self.assertEqual(cube.get_projection(2, absolute=True)[0], 10)
+            self.assertEqual(cube.get_projection(1, absolute=False)[0], 4)
+            self.assertEqual(cube.get_projection(1, absolute=True)[1], 6)
+            self.assertEqual(cube.get_projection(0, absolute=False)[0], -1)
+            self.assertEqual(cube.get_projection(0, absolute=True)[1], 7)
+
+        def test_parse(self):
+            fh = StringIO.StringIO(' ')
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+
+            lines = simple5.split('\n')
+            copy = lines[:]
+            copy[2] = ''
+            fh = StringIO.StringIO('\n'.join(copy))
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+            copy[2] = lines[2]
+
+            copy[3] = 'a 1 1 1'
+            fh = StringIO.StringIO('\n'.join(copy))
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+            copy[3] = '1 1 1 1 1'
+            fh = StringIO.StringIO('\n'.join(copy))
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+            copy[3] = lines[3]
+
+            copy[-2] = 'a '*len(copy[-2].split())
+            fh = StringIO.StringIO('\n'.join(copy))
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+            copy[-2] = '1'
+            fh = StringIO.StringIO('\n'.join(copy))
+            self.assertRaises(ValueError, CubeFile, filehandle=fh)
+
+            fh = StringIO.StringIO(simple3)
+            self.assertRaises(IndexError, CubeFile, filehandle=fh)
