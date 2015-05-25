@@ -1,9 +1,0 @@
-setup.py
-euston/__init__.py
-euston/geometry.py
-euston/helper.py
-euston/io.py
-euston.egg-info/PKG-INFO
-euston.egg-info/SOURCES.txt
-euston.egg-info/dependency_links.txt
-euston.egg-info/top_level.txt
