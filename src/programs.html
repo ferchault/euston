@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Programs &mdash; euston 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="euston 0.1 documentation" href="../index.html" />
+    <link rel="next" title="euston modules" href="euston/index.html" />
+    <link rel="prev" title="Welcome to euston’s documentation!" href="../index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          euston</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="euston/index.html">euston modules</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"><ul>
+<li><a class="reference internal" href="#">Programs</a><ul>
+<li><a class="reference internal" href="#module-es_fitting">es_fitting.py</a><ul>
+<li><a class="reference internal" href="#command-line-interface">Command Line Interface</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-es_cp2kpretty">es_cp2kpretty.py</a><ul>
+<li><a class="reference internal" href="#id1">Command Line Interface</a></li>
+<li><a class="reference internal" href="#id2">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-es_cp2k2xyz">es_cp2k2xyz.py</a><ul>
+<li><a class="reference internal" href="#id3">Command Line Interface</a></li>
+<li><a class="reference internal" href="#id4">Implementation</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-es_cellmultiply">es_cellmultiply.py</a><ul>
+<li><a class="reference internal" href="#id5">Command Line Interface</a></li>
+<li><a class="reference internal" href="#id8">Implementation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</ul>
+</li>
+              
+            
+            
+              
+                
+  <li>
+    <a href="../index.html" title="Previous Chapter: Welcome to euston’s documentation!"><span class="glyphicon glyphicon-chevron-left visible-sm"></span><span class="hidden-sm hidden-tablet">&laquo; Welcome to eusto...</span>
+    </a>
+  </li>
+  <li>
+    <a href="euston/index.html" title="Next Chapter: euston modules"><span class="glyphicon glyphicon-chevron-right visible-sm"></span><span class="hidden-sm hidden-tablet">euston modules &raquo;</span>
+    </a>
+  </li>
+              
+            
+            
+            
+            
+              <li class="hidden-sm">
+<div id="sourcelink">
+  <a href="../_sources/src/programs.txt"
+     rel="nofollow">Source</a>
+</div></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <div class="section" id="programs">
+<h1>Programs<a class="headerlink" href="#programs" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-es_fitting">
+<span id="es-fitting-py"></span><h2>es_fitting.py<a class="headerlink" href="#module-es_fitting" title="Permalink to this headline">¶</a></h2>
+<p>Calculates the Wigner-Seitz projection of cube file data of periodic data.</p>
+<dl class="function">
+<dt id="es_fitting.main">
+<tt class="descclassname">es_fitting.</tt><tt class="descname">main</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/es_fitting.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#es_fitting.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main routine wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.ArgumentParser</em>) &#8211; Argument parser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="section" id="command-line-interface">
+<h3>Command Line Interface<a class="headerlink" href="#command-line-interface" title="Permalink to this headline">¶</a></h3>
+<dl class="option">
+<dt id="cmdoption-es_fitting.py-arg-filename">
+<tt class="descname">filename</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_fitting.py-arg-filename" title="Permalink to this definition">¶</a></dt>
+<dd><p>The cubefile to read from. Both Bohr and Angstrom units are supported.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_fitting.py--periodic">
+<tt class="descname">--periodic</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_fitting.py--periodic" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether to treat input file in periodic boundary conditions. In the current implementation, this requires copying all atom positions for the 26 direct neighbouring cubes and therefore carries substantial cost in terms of memory requirements. The runtime scales O(log n) with the number of atoms.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_fitting.py--leafsize">
+<tt class="descname">--leafsize</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_fitting.py--leafsize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of points at which brute-force nearest neighbour search is employed. Increasing this number introduces higher memory requirements, but may speed up processing. Default: 5000.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="implementation">
+<h3>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt>
+<tt class="descclassname">es_fitting.</tt><tt class="descname">main</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/es_fitting.html#main"><span class="viewcode-link">[source]</span></a></dt>
+<dd><p>Main routine wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.ArgumentParser</em>) &#8211; Argument parser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-es_cp2kpretty">
+<span id="es-cp2kpretty-py"></span><h2>es_cp2kpretty.py<a class="headerlink" href="#module-es_cp2kpretty" title="Permalink to this headline">¶</a></h2>
+<p>Reads a CP2K input file and reformats it such that</p>
+<ul class="simple">
+<li>Every section is properly indented.</li>
+<li>Every section is terminated with a &amp;END line that includes the name of the section.</li>
+<li>Sections are enclosed in blank lines.</li>
+</ul>
+<div class="section" id="id1">
+<h3>Command Line Interface<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<dl class="option">
+<dt id="cmdoption-es_fitting.py-arg-input">
+<tt class="descname">input</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_fitting.py-arg-input" title="Permalink to this definition">¶</a></dt>
+<dd><p>CP2K input filename.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_fitting.py-arg-output">
+<tt class="descname">output</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_fitting.py-arg-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>CP2K output filename.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id2">
+<h3>Implementation<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="es_cp2kpretty.main">
+<tt class="descclassname">es_cp2kpretty.</tt><tt class="descname">main</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/es_cp2kpretty.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#es_cp2kpretty.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main routine wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.ArgumentParser</em>) &#8211; Argument parser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-es_cp2k2xyz">
+<span id="es-cp2k2xyz-py"></span><h2>es_cp2k2xyz.py<a class="headerlink" href="#module-es_cp2k2xyz" title="Permalink to this headline">¶</a></h2>
+<p>Extracts coordinates from CP2K input format into XYZ files.</p>
+<p>Supports scaled CP2K coordinates and scaled XYZ output.</p>
+<div class="section" id="id3">
+<h3>Command Line Interface<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<dl class="option">
+<dt id="cmdoption-es_cp2k2xyz.py-arg-input">
+<tt class="descname">input</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cp2k2xyz.py-arg-input" title="Permalink to this definition">¶</a></dt>
+<dd><p>CP2K input filename.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cp2k2xyz.py-arg-output">
+<tt class="descname">output</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cp2k2xyz.py-arg-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>XYZ output filename.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cp2k2xyz.py--scaled">
+<tt class="descname">--scaled</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cp2k2xyz.py--scaled" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the output should be in fractions of the box.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id4">
+<h3>Implementation<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="es_cp2k2xyz.main">
+<tt class="descclassname">es_cp2k2xyz.</tt><tt class="descname">main</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/es_cp2k2xyz.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#es_cp2k2xyz.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main routine wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.ArgumentParser</em>) &#8211; Argument parser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="module-es_cellmultiply">
+<span id="es-cellmultiply-py"></span><h2>es_cellmultiply.py<a class="headerlink" href="#module-es_cellmultiply" title="Permalink to this headline">¶</a></h2>
+<p>Multiplies a cell along the lattice vectors.</p>
+<p>Comes with support for scaled input and output, h matrices and arbitrary cell shapes. Works only on XYZ files.</p>
+<div class="section" id="id5">
+<h3>Command Line Interface<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py-arg-input">
+<tt class="descname">input</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py-arg-input" title="Permalink to this definition">¶</a></dt>
+<dd><p>XYZ input filename.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py-arg-output">
+<tt class="descname">output</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py-arg-output" title="Permalink to this definition">¶</a></dt>
+<dd><p>XYZ output filename.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--X">
+<tt class="descname">--X</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--X" title="Permalink to this definition">¶</a></dt>
+<dd><p>X repeat count. Default: 1. Only positive integers supported.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--Y">
+<tt class="descname">--Y</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--Y" title="Permalink to this definition">¶</a></dt>
+<dd><p>Y repeat count. Default: 1. Only positive integers supported.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--Z">
+<tt class="descname">--Z</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--Z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Z repeat count. Default: 1. Only positive integers supported.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--sc_in">
+<tt class="descname">--sc_in</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--sc_in" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the input file contains scaled coordinates.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--sc_out">
+<tt class="descname">--sc_out</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--sc_out" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the out file contains scaled coordinates.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--hmat">
+<tt class="descname">--hmat</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--hmat" title="Permalink to this definition">¶</a></dt>
+<dd><p>H matrix (cell vectors in columns). Comma-separated in row-first notation without spaces.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--abc">
+<tt class="descname">--abc</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--abc" title="Permalink to this definition">¶</a></dt>
+<dd><p>a, b, c, alpha, beta, gamma. Comma-separated without spaces.</p>
+</dd></dl>
+
+<dl class="option">
+<dt id="cmdoption-es_cellmultiply.py--radians">
+<tt class="descname">--radians</tt><tt class="descclassname"></tt><a class="headerlink" href="#cmdoption-es_cellmultiply.py--radians" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether angles in <a href="#id6"><span class="problematic" id="id7">`</span></a>&#8211;abc are given in radians.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="id8">
+<h3>Implementation<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="es_cellmultiply.main">
+<tt class="descclassname">es_cellmultiply.</tt><tt class="descname">main</tt><big>(</big><em>parser</em><big>)</big><a class="reference internal" href="../_modules/es_cellmultiply.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#es_cellmultiply.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Main routine wrapper.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parser</strong> (<em>argparse.ArgumentParser</em>) &#8211; Argument parser</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, Guido Falk von Rudorff.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>

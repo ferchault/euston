@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>es_fitting &mdash; euston 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/basic.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-3.2.0/css/bootstrap-theme.min.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/bootstrap-sphinx.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-1.11.0.min.js"></script>
+    <script type="text/javascript" src="../_static/js/jquery-fix.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-3.2.0/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../_static/bootstrap-sphinx.js"></script>
+    <link rel="top" title="euston 0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" />
+<meta charset='utf-8'>
+<meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
+<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
+<meta name="apple-mobile-web-app-capable" content="yes">
+
+  </head>
+  <body>
+
+  <div id="navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <!-- .btn-navbar is used as the toggle for collapsed navbar content -->
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".nav-collapse">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="../index.html">
+          euston</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.1</b></span>
+      </div>
+
+        <div class="collapse navbar-collapse nav-collapse">
+          <ul class="nav navbar-nav">
+            
+            
+              <li class="dropdown globaltoc-container">
+  <a role="button"
+     id="dLabelGlobalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="../index.html">Site <b class="caret"></b></a>
+  <ul class="dropdown-menu globaltoc"
+      role="menu"
+      aria-labelledby="dLabelGlobalToc"><ul>
+<li class="toctree-l1"><a class="reference internal" href="../src/programs.html">Programs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../src/euston/index.html">euston modules</a></li>
+</ul>
+</ul>
+</li>
+              
+                <li class="dropdown">
+  <a role="button"
+     id="dLabelLocalToc"
+     data-toggle="dropdown"
+     data-target="#"
+     href="#">Page <b class="caret"></b></a>
+  <ul class="dropdown-menu localtoc"
+      role="menu"
+      aria-labelledby="dLabelLocalToc"></ul>
+</li>
+              
+            
+            
+              
+                
+              
+            
+            
+            
+            
+              <li class="hidden-sm"></li>
+            
+          </ul>
+
+          
+            
+<form class="navbar-form navbar-right" action="../search.html" method="get">
+ <div class="form-group">
+  <input type="text" name="q" class="form-control" placeholder="Search" />
+ </div>
+  <input type="hidden" name="check_keywords" value="yes" />
+  <input type="hidden" name="area" value="default" />
+</form>
+          
+        </div>
+    </div>
+  </div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      
+  <h1>Source code for es_fitting</h1><div class="highlight"><pre>
+<span class="c">#!/usr/bin/env python</span>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Calculates the Wigner-Seitz projection of cube file data of periodic data.</span>
+
+<span class="sd">.. autofunction:: main</span>
+
+<span class="sd">Command Line Interface</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">.. program:: es_fitting.py </span>
+
+<span class="sd">.. option:: filename</span>
+
+<span class="sd">   The cubefile to read from. Both Bohr and Angstrom units are supported.</span>
+
+<span class="sd">.. option:: --periodic</span>
+
+<span class="sd">   Whether to treat input file in periodic boundary conditions. In the current implementation, this requires copying all atom positions for the 26 direct neighbouring cubes and therefore carries substantial cost in terms of memory requirements. The runtime scales O(log n) with the number of atoms.</span>
+
+<span class="sd">.. option:: --leafsize</span>
+
+<span class="sd">   Number of points at which brute-force nearest neighbour search is employed. Increasing this number introduces higher memory requirements, but may speed up processing. Default: 5000.</span>
+
+<span class="sd">Implementation</span>
+<span class="sd">--------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c"># system modules</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+
+<span class="c"># third-party modules</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial</span> <span class="kn">import</span> <span class="n">KDTree</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="c"># custom modules</span>
+<span class="kn">import</span> <span class="nn">euston.io</span> <span class="kn">as</span> <span class="nn">io</span>
+<span class="kn">import</span> <span class="nn">euston.geometry</span> <span class="kn">as</span> <span class="nn">geom</span>
+
+<span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">description</span><span class="o">=</span><span class="s">&#39;Calculates the Wigner-Seitz projection of cube file data of periodic data.&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;filename&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;The cube file.&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--periodic&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&#39;store_true&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Treats cube data periodically.&#39;</span><span class="p">)</span>
+<span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s">&#39;--leafsize&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&#39;Number of points at which brute-force nearest neighbour search is employed.&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../src/programs.html#es_fitting.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">parser</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Main routine wrapper.</span>
+
+<span class="sd">    :param argparse.ArgumentParser parser: Argument parser</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">print</span> <span class="s">&#39;Reading cubefile...                 &#39;</span><span class="p">,</span>
+    <span class="n">cube</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">CubeFile</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">print</span> <span class="s">&#39;Completed, </span><span class="si">%d</span><span class="s"> atoms </span><span class="si">%d</span><span class="s"> voxels.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">(),</span> <span class="n">cube</span><span class="o">.</span><span class="n">count_voxels</span><span class="p">())</span>
+
+    <span class="k">print</span> <span class="s">&#39;Calculating cell dimensions...      &#39;</span><span class="p">,</span>
+    <span class="n">h_mat</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">get_h_matrix</span><span class="p">()</span>
+    <span class="k">print</span> <span class="s">&#39;Completed.&#39;</span>
+
+    <span class="k">print</span> <span class="s">&#39;Adding image atoms...               &#39;</span><span class="p">,</span>
+    <span class="n">coord</span> <span class="o">=</span> <span class="n">cube</span><span class="o">.</span><span class="n">get_coordinates</span><span class="p">()</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(((</span><span class="nb">len</span><span class="p">(</span><span class="n">coord</span><span class="p">)</span><span class="o">*</span><span class="mi">27</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">counter</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="o">*</span><span class="n">z</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">shift</span> <span class="o">=</span> <span class="p">(</span><span class="n">h_mat</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">]))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">images</span><span class="p">[</span><span class="n">counter</span><span class="o">*</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">():(</span><span class="n">counter</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">(),</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">coord</span><span class="o">+</span><span class="n">shift</span>
+                <span class="n">counter</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">print</span> <span class="s">&#39;Completed, </span><span class="si">%d</span><span class="s"> atoms added.&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">()</span><span class="o">*</span><span class="mi">26</span><span class="p">)</span>
+
+    <span class="n">images</span><span class="p">[</span><span class="o">-</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">():]</span> <span class="o">=</span> <span class="n">coord</span>
+
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">periodic</span><span class="p">:</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">images</span><span class="p">,</span> <span class="n">leafsize</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">leafsize</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kdt</span> <span class="o">=</span> <span class="n">KDTree</span><span class="p">(</span><span class="n">coord</span><span class="p">,</span> <span class="n">leafsize</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">leafsize</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">())</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">get_xlen</span><span class="p">()):</span>
+        <span class="k">print</span> <span class="n">x</span>
+        <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">get_ylen</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">get_zlen</span><span class="p">()):</span>
+                <span class="n">d</span><span class="p">,</span> <span class="n">i</span> <span class="o">=</span> <span class="n">kdt</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">get_voxel_pos</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">centered</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+                <span class="n">i</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="n">cube</span><span class="o">.</span><span class="n">count_atoms</span><span class="p">()</span>
+                <span class="n">vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">cube</span><span class="o">.</span><span class="n">get_val</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
+
+    <span class="k">print</span> <span class="s">&#39;Results (atom - value)&#39;</span>
+    <span class="n">vals</span> <span class="o">*=</span> <span class="n">cube</span><span class="o">.</span><span class="n">get_voxel_volume</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vals</span><span class="p">):</span>
+        <span class="k">print</span> <span class="n">idx</span><span class="p">,</span> <span class="n">val</span>
+</div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">parser</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+      
+  </div>
+</div>
+<footer class="footer">
+  <div class="container">
+    <p class="pull-right">
+      <a href="#">Back to top</a>
+      
+    </p>
+    <p>
+        &copy; Copyright 2015, Guido Falk von Rudorff.<br/>
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2.2.<br/>
+    </p>
+  </div>
+</footer>
+  </body>
+</html>
