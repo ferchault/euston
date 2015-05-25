@@ -1,7 +1,7 @@
 # Makefile for Sphinx documentation
 #
 
-GH_PAGES_SOURCES = src
+GH_PAGES_SOURCES = src Makefile config index.rst
 
 # You can set these variables from the command line.
 SPHINXOPTS    = -c config
@@ -180,11 +180,12 @@ pseudoxml:
 
 gh-pages:
 	git checkout gh-pages
-	rm -rf build _sources _static
+	rm -rf doc
 	git checkout master $(GH_PAGES_SOURCES)
 	git reset HEAD
 	make html
-	mv -fv build/html/* ./
-	rm -rf $(GH_PAGES_SOURCES) build
+	rm -rf $(GH_PAGES_SOURCES) 
+	mv -fv doc/_build/html/* ./
+	rm -rf doc
 	git add -A
-	git ci -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout master
+	git commit -m "Generated gh-pages for `git log master -1 --pretty=short --abbrev-commit`" && git push origin gh-pages ; git checkout master
