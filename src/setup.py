@@ -14,5 +14,6 @@ setup(name='euston',
       packages=['euston', ],
       test_suite="tests",
       license='LGPL',
-      classifiers=['Development Status :: 3 - Alpha',]
+      classifiers=['Development Status :: 3 - Alpha',],
+      scripts=['tools/es_cellmultiply.py', 'tools/es_cp2k2xyz.py', 'tools/es_cp2kperf.py', 'tools/es_cp2kpretty.py', 'tools/es_fitting.py', 'tools/es_phscan.py', 'tools/es_projectcube.py', 'tools/es_wrapcube.py'],
      )
