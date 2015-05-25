@@ -56,8 +56,7 @@ adv1 += '1 ' * 1000
 class TestCubeFile(TestCase):
         def test_parse_error(self):
             fh = StringIO.StringIO(simple3)
-            with self.assertRaises(IndexError):
-                CubeFile(filehandle=fh)
+            self.assertRaises(IndexError, CubeFile, filehandle=fh)
 
         def test_atom_count(self):
             fh = StringIO.StringIO(simple)
@@ -84,8 +83,7 @@ class TestCubeFile(TestCase):
             fh = StringIO.StringIO(simple)
             cube = CubeFile(filehandle=fh)
             self.assertEqual(cube.get_val(0, 0, 0), 1)
-            with self.assertRaises(IndexError):
-                cube.get_val(1, 0, 0)
+            self.assertRaises(IndexError, cube.get_val, 1, 0, 0)
 
         def test_get_voxel_pos(self):
             fh = StringIO.StringIO(simple)
@@ -131,7 +129,7 @@ class TestCubeFile(TestCase):
             cube2 = CubeFile(filehandle=fh2)
             self.assertTrue(np.allclose(cube.get_coordinates(), cube2.get_coordinates()))
             self.assertTrue(np.allclose(cube._data, cube2._data))
-            self.assertAlmostEqual(cube.get_voxel_volume(), cube2.get_voxel_volume(),delta=10e-6)
+            self.assertAlmostEqual(cube.get_voxel_volume(), cube2.get_voxel_volume())
             self.assertEqual(cube.get_xlen(), cube2.get_xlen())
             self.assertEqual(cube.get_ylen(), cube2.get_ylen())
             self.assertEqual(cube.get_zlen(), cube2.get_zlen())
