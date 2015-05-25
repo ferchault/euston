@@ -128,7 +128,6 @@ class TestCubeFile(TestCase):
             cube = CubeFile(filehandle=fh)
             lines = '\n'.join(cube.to_string())
             fh2 = StringIO.StringIO(lines)
-            print lines
             cube2 = CubeFile(filehandle=fh2)
             self.assertTrue(np.allclose(cube.get_coordinates(), cube2.get_coordinates()))
             self.assertTrue(np.allclose(cube._data, cube2._data))
