@@ -94,14 +94,12 @@ class XYZ(FileIO):
     def to_string(self):
         lines = []
         lines.append('%d' % len(self._labels))
-        lines.append('')
+        lines.append(self._comment)
         for label, atom in zip(self._labels, self._coordinates):
             lines.append('%s %f %f %f' % (label, atom[0], atom[1], atom[2]))
         return lines
 
     def _parse(self):
-        if not self._loaded:
-            return
         lines = self._fh.readlines()
         try:
             num_atoms = int(lines[0].strip())
@@ -114,6 +112,7 @@ class XYZ(FileIO):
 
         self._coordinates = np.zeros((num_atoms, 3))
         self._labels = []
+        self._comment = lines[1].strip()
         for line in lines[2:]:
             parts = line.strip().split()
             if len(parts) != 4:
