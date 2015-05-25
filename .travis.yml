@@ -5,8 +5,10 @@ python:
 install:
   - pip install -e src
   - pip install -q -r config/requirements.txt --use-mirrors
-script: 
-  - coverage run --rcfile=config/coverage.conf setup.py test
+script:
+  - cd src
+  - coverage run --rcfile=../config/coverage.conf setup.py test
+  - cd ..
   - make html
 after_script:
   - coveralls

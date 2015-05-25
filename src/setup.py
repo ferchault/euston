@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+import sys
+import os
+sys.path.append(os.path.abspath('..'))
 
 setup(name='euston',
       version='0.1a1',
