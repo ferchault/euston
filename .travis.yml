@@ -4,7 +4,7 @@ python:
   - "2.6"
 install:
   - pip install -e src
-  - pip install coveralls sphinx-bootstrap-theme
+  - pip install -q -r config/requirements.txt --use-mirrors
 script: 
   - coverage run --rcfile=config/coverage.conf setup.py test
   - make html

@@ -1,0 +1,3 @@
+coveralls
+sphinx
+sphinx-bootstrap-theme

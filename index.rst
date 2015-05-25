@@ -6,8 +6,8 @@ Welcome to euston's documentation!
 Contents:
 
 .. toctree::
-   programs
-   euston/index
+   src/programs
+   src/euston/index
    :maxdepth: 2
 
 
