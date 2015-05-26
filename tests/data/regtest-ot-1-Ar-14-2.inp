@@ -1,0 +1,14 @@
+&FORCE_EVAL
+  &SUBSYS
+DUMMY a
+    &CELL
+ A 4 0 0
+ B 0 5 0
+ C 0 0 6
+    &END CELL
+    &COORD
+Ar 1 0 0
+Ar 0 0 0
+    &END COORD
+  &END SUBSYS
+&END FORCE_EVAL
