@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # system modules
+import abc
 import gzip
 import math
 import itertools
@@ -39,6 +40,23 @@ def write_lines(filename, lines, terminate='\n'):
 
     fh.close()
 
+class HoldsCoordinates(object):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def get_coordinates(self):
+        pass
+
+def anyopen(filename):
+    rawname = filename
+    gzip = '.gz .gzip'.split()
+    for ext in gzip:
+        if rawname.endswith(ext):
+            rawname = rawname[:-len(ext)]
+
+    if rawname.endswith('.xyz'):
+        return XYZ(filename=filename)
+
 class FileIO(object):
     """Abstract base class for all file objects with support for gzipped input files.."""
     
@@ -66,7 +84,7 @@ class FileIO(object):
             self._loaded = True
         else:
             self._loaded = True
-            if filename[-3:] == '.gz':
+            if filename[-3:] == '.gz' or filename[-5:] == '.gzip':
                 self._fh = gzip.open(filename, 'rb')
             else:
                 self._fh = open(filename, 'r')
@@ -79,7 +97,7 @@ class FileIO(object):
         """Finalises file content parsing."""
         self._parsed = True
 
-class XYZ(FileIO):
+class XYZ(HoldsCoordinates, FileIO):
     @require_loaded
     def count_atoms(self):
         return self._coordinates.shape[0]
