@@ -3,7 +3,16 @@
 """
 Multiplies a cell along the lattice vectors.
 
-Comes with support for scaled input and output, h matrices and arbitrary cell shapes. Works only on XYZ files.
+Comes with support for scaled input and output, h matrices and arbitrary cell shapes.
+
+Supported File Formats
+----------------------
+
+====== ====== ====== =========
+Format Input  Output Extension
+====== ====== ====== =========
+XYZ    Native Native .xyz
+====== ====== ====== =========
 
 Command Line Interface
 ----------------------
@@ -47,7 +56,7 @@ Command Line Interface
 
 .. option:: --radians
 
-   Whether angles in `--abc are given in radians.
+   Whether angles in --abc are given in radians.
 
 Implementation
 --------------
