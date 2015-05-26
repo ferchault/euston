@@ -240,7 +240,8 @@ class Cp2kInput(FileIO):
                 line_numbers = line_numbers[:-1]
                 continue
             if line.startswith('&'):
-                lines.append('')
+                if len(lines) != 0:
+                    lines.append('')
                 lines.append('%s%s' % (indent*len(sections), line))
                 sections.append((line.split()[0][1:]).strip())
                 line_numbers.append(no)
@@ -259,6 +260,9 @@ class Cp2kInput(FileIO):
                 retlines[-1] = line
                 continue
             retlines.append(line)
+
+        if retlines[-1] == '':
+            retlines.pop()
         return retlines
 
     @require_loaded
