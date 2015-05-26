@@ -266,15 +266,15 @@ class Cp2kInput(FileIO):
         try:
             res = self.get_path(keyword)
         except ValueError as e:
-            print str(e)
+            #print str(e)
             return None
         if res is None:
-            print 'No such key: %s' % keyword
+            #print 'No such key: %s' % keyword
             return None
         try:
             val = map(conversion, res.split())
         except:
-            print 'Invalid %s entry.' % keyword
+            #print 'Invalid %s entry.' % keyword
             return None
         return val
 
@@ -337,7 +337,9 @@ class Cp2kInput(FileIO):
         # check whether ABC / ALPHA_BETA_GAMMA is set
         retval1 = self.get_keyword_checked('FORCE_EVAL / SUBSYS / CELL / ABC', float)
         retval2 = self.get_keyword_checked('FORCE_EVAL / SUBSYS / CELL / ALPHA_BETA_GAMMA', float)
-        if retval1 is not None and retval2 is not None:
+        if retval1 is not None:
+            if retval2 is None:
+                retval2 = [90, 90, 90]
             a, b, c = retval1
             alpha, beta, gamma = np.radians(np.array(retval2))
 
@@ -357,7 +359,7 @@ class Cp2kInput(FileIO):
                 b = np.array(retval2)
                 c = np.array(retval3)
 
-        if a is None or alpha is None:
+        if a is None:
             print 'No supported cell information found.'
             return None
 
