@@ -15,6 +15,18 @@ FOOBAR 1
 SNAFU 2
 &END SECTIONA'''
 
+simple3 = '''&SECTIONA
+# comment1
+! comment2
+
+&END SECTIONA'''
+
+simple4 = '''&DFT
+
+
+&END DFT'''
+
+
 class TestCp2kInput(unittest.TestCase):
     def _get_data_file(self, filename):
         return os.path.join(os.path.dirname(os.path.realpath(__file__)), 'data', filename)
@@ -71,6 +83,28 @@ class TestCp2kInput(unittest.TestCase):
         cp2k.set_lines(simple2.split('\n'))
         expected = ['&SECTIONA', '  &SECTIONB', '    FOOBAR 1', '  &END SECTIONB', '', '  SNAFU 2', '&END SECTIONA']
         self.assertEqual(expected, cp2k.to_string())
+        expected = ['&SECTIONA', '  &SECTIONB', '    FOOBAR 1', '  &END', '', '  SNAFU 2', '&END']
+        self.assertEqual(expected, cp2k.to_string(close_sections=False))
+        cp2k.set_lines(simple1.split('\n'))
+        self.assertRaises(ValueError, cp2k.to_string)
+        cp2k.set_lines(simple3.split('\n'))
+        expected = ['&SECTIONA', '  # comment1', '  ! comment2', '', '&END SECTIONA']
+        self.assertEqual(expected, cp2k.to_string(keep_empty=True))
+        cp2k.set_lines(simple4.split('\n'))
+        expected = ['&DFT', '&END DFT']
+        self.assertEqual(expected, cp2k.to_string())
+
+    def test_tostringcomments(self):
+        cp2k = Cp2kInput()
+        cp2k.set_lines(simple3.split('\n'))
+        expected = ['&SECTIONA', '  # comment1', '  ! comment2', '&END SECTIONA']
+        self.assertEqual(expected, cp2k.to_string())
+        expected = ['&SECTIONA', '&END SECTIONA']
+        self.assertEqual(expected, cp2k.to_string(keep_comments=False))
+        expected = ['&SECTIONA', '# comment1', '! comment2', '&END SECTIONA']
+        self.assertEqual(expected, cp2k.to_string(indent_comments=False))
+        expected = ['&SECTIONA', '&END SECTIONA']
+        self.assertEqual(expected, cp2k.to_string(keep_comments=False, indent_comments=True))
 
     def test_setlines(self):
         cp2k = Cp2kInput()

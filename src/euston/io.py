@@ -217,11 +217,14 @@ class Cp2kInput(FileIO):
         sections = []
         line_numbers = []
         for no, line in enumerate(self._lines):
+            line = line.strip()
             if len(line) == 0:
                 if keep_empty:
                     lines.append('')
                 continue
-            if (line.startswith('#') or line.startswith('!')) and keep_comments:
+            if (line.startswith('#') or line.startswith('!')):
+                if not keep_comments:
+                    continue
                 if indent_comments:
                     lines.append('%s%s' % (indent*len(sections), line))
                 else:
