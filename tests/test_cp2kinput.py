@@ -62,11 +62,11 @@ class TestCp2kInput(unittest.TestCase):
         self.assertTrue(np.allclose(b, np.array([0, 5, 0])))
         self.assertTrue(np.allclose(c, np.array([0, 0, 6])))
 
-    def test_tostring(self):
-        cp2k = Cp2kInput()
-        cp2k.set_lines(simple2.split('\n'))
-        expected = ['&SECTIONA', '  &SECTIONB', '    FOOBAR 1', '  &END', '', '  SNAFU 2', '&END SECTIONA', '']
-        self.assertEqual(expected, cp2k.to_string())
+    #def test_tostring(self):
+    #    cp2k = Cp2kInput()
+    #    cp2k.set_lines(simple2.split('\n'))
+    #    expected = ['&SECTIONA', '  &SECTIONB', '    FOOBAR 1', '  &END', '', '  SNAFU 2', '&END SECTIONA', '']
+    #    self.assertEqual(expected, cp2k.to_string())
 
     def test_setlines(self):
         cp2k = Cp2kInput()
