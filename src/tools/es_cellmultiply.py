@@ -79,13 +79,12 @@ parser.add_argument('--hmat', type=str, help='H matrix (cell vectors in columns)
 parser.add_argument('--abc', type=str, help='a, b, c, alpha, beta, gamma. Comma-separated without spaces.')
 parser.add_argument('--radians', action='store_true', help='Whether angles in --abc are given in radians.')
 
-def main(parser):
+def main(args):
     """
     Main routine wrapper.
 
-    :param argparse.ArgumentParser parser: Argument parser
+    :param args: Arguments as from argparse.ArgumentParser.parse_args
     """
-    args = parser.parse_args()
 
     xyz = io.XYZ(args.input)
 
@@ -108,13 +107,16 @@ def main(parser):
                 abc = map(float, args.abc.split(','))
             except:
                 print 'Invalid abc entries.'
-                exit(2)
+                exit(3)
+            if len(abc) != 6:
+                print 'Not enough entries for cell lengths.'
+                exit(5)
             hmat = geo.abc_to_hmatrix(*abc, degrees=(not args.radians))
 
     for images in (args.X, args.Y, args.Z):
         if images < 1:
             print 'Invalid multiplier setting - has to be at least one.'
-            exit(3)
+            exit(4)
 
     multiplied = geo.cell_multiply(xyz.get_coordinates(), args.X, args.Y, args.Z, h_matrix=hmat, scaling_in=args.sc_in, scaling_out=args.sc_out)
     factor = args.X*args.Y*args.Z
@@ -124,4 +126,4 @@ def main(parser):
     io.write_lines(args.output, output.to_string())
 
 if __name__ == '__main__':
-    main(parser)
+    main(parser.parse_args())

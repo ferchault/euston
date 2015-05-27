@@ -118,6 +118,9 @@ class XYZ(HoldsCoordinates, FileIO):
         return lines
 
     def _parse(self):
+        if self._fh is None:
+            self._comment = ''
+            return
         lines = self._fh.readlines()
         try:
             num_atoms = int(lines[0].strip())
