@@ -9,6 +9,11 @@ import re
 
 # third-party modules
 import numpy as np
+try:
+    import MDAnalysis as mda
+    HAS_MDA = True
+except:
+    HAS_MDA = False
 
 # custom modules
 import geometry as geo
@@ -47,6 +52,13 @@ class HoldsCoordinates(object):
     def get_coordinates(self):
         pass
 
+class HoldsUnitcell(object):
+    __metaclass__ = abc.ABCMeta
+
+    @abc.abstractmethod
+    def get_h_matrix(self):
+        pass
+
 def anyopen(filename):
     rawname = filename
     gzip = '.gz .gzip'.split()
@@ -56,6 +68,9 @@ def anyopen(filename):
 
     if rawname.endswith('.xyz'):
         return XYZ(filename=filename)
+
+    if rawname.endswith('.dcd'):
+        return DCD(filename=filename)
 
 class FileIO(object):
     """Abstract base class for all file objects with support for gzipped input files.."""
@@ -96,6 +111,30 @@ class FileIO(object):
     def _parse(self):
         """Finalises file content parsing."""
         self._parsed = True
+
+class DCD(HoldsCoordinates, HoldsUnitcell, FileIO):
+    @require_loaded
+    def _parse(self):
+        if not HAS_MDA:
+            raise TypeError('MDAnalysis required in order to load a DCD file.')
+        reader = mda.coordinates.DCD.DCDReader(self._fh.name)
+        self._hmat = geo.abc_to_hmatrix(*reader.ts.dimensions, degrees=True)
+        self._coordinates = np.zeros((reader.ts.numatoms, 3))
+        self._coordinates[:, 0] = reader.ts._x
+        self._coordinates[:, 1] = reader.ts._y
+        self._coordinates[:, 2] = reader.ts._z
+
+        super(DCD, self)._parse()
+
+    @require_loaded
+    @require_parsed
+    def get_coordinates(self):
+        return self._coordinates
+
+    @require_loaded
+    @require_parsed
+    def get_h_matrix(self):
+        return self._hmat
 
 class XYZ(HoldsCoordinates, FileIO):
     @require_loaded
@@ -394,7 +433,7 @@ class Cp2kInput(FileIO):
         return (a, b, c)
 
 
-class CubeFile(FileIO):
+class CubeFile(HoldsUnitcell, FileIO):
     def count_atoms(self):
         return self._natoms
 

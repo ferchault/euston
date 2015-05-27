@@ -8,11 +8,15 @@ Comes with support for scaled input and output, h matrices and arbitrary cell sh
 Supported File Formats
 ----------------------
 
-====== ====== ====== =========
-Format Input  Output Extension
-====== ====== ====== =========
-XYZ    Native Native .xyz
-====== ====== ====== =========
+Most of the file formats require external python packages like MDAnalysis or mdtraj. Only native formats can be
+used without any further packages.
+
+====== ===================== ===================== =========
+Format Input                 Output                Extension
+====== ===================== ===================== =========
+XYZ    Native                Native                .xyz
+DCD    MDAnalysis            --                    .dcd
+====== ===================== ===================== =========
 
 Command Line Interface
 ----------------------
@@ -86,10 +90,15 @@ def main(args):
     :param args: Arguments as from argparse.ArgumentParser.parse_args
     """
 
-    xyz = io.XYZ(args.input)
+    inputfile = io.anyopen(args.input)
+    if not isinstance(inputfile, io.HoldsCoordinates):
+        print 'Input file has to contain atom positions.'
 
     hmat = None
-    if not (args.sc_in and args.sc_out):
+    if isinstance(inputfile, io.HoldsUnitcell):
+        hmat = inputfile.get_h_matrix()
+
+    if not (args.sc_in and args.sc_out) and (hmat is None):
         if (args.hmat is None and args.abc is None) or (args.hmat is not None and args.abc is not None):
             print 'Please specify either the H matrix or lattice constants unless input and output are scaled.'
             exit(1)
@@ -118,11 +127,15 @@ def main(args):
             print 'Invalid multiplier setting - has to be at least one.'
             exit(4)
 
-    multiplied = geo.cell_multiply(xyz.get_coordinates(), args.X, args.Y, args.Z, h_matrix=hmat, scaling_in=args.sc_in, scaling_out=args.sc_out)
+    multiplied = geo.cell_multiply(inputfile.get_coordinates(), args.X, args.Y, args.Z, h_matrix=hmat, scaling_in=args.sc_in, scaling_out=args.sc_out)
     factor = args.X*args.Y*args.Z
 
     output = io.XYZ()
-    output.set_data(xyz.get_labels()*factor, multiplied)
+    try:
+        labels = inputfile.get_labels()
+    except:
+        labels = ['X'] * inputfile.get_coordinates().shape[0]
+    output.set_data(labels*factor, multiplied)
     io.write_lines(args.output, output.to_string())
 
 if __name__ == '__main__':
