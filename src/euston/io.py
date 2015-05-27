@@ -14,6 +14,12 @@ try:
     HAS_MDA = True
 except:
     HAS_MDA = False
+try:
+    import mdtraj as mdt
+    import re # needed for DCD file reading workaround
+    HAS_MDT = True
+except:
+    HAS_MDT = False
 
 # custom modules
 import geometry as geo
@@ -115,16 +121,35 @@ class FileIO(object):
 class DCD(HoldsCoordinates, HoldsUnitcell, FileIO):
     @require_loaded
     def _parse(self):
-        if not HAS_MDA:
-            raise TypeError('MDAnalysis required in order to load a DCD file.')
-        reader = mda.coordinates.DCD.DCDReader(self._fh.name)
-        self._hmat = geo.abc_to_hmatrix(*reader.ts.dimensions, degrees=True)
-        self._coordinates = np.zeros((reader.ts.numatoms, 3))
-        self._coordinates[:, 0] = reader.ts._x
-        self._coordinates[:, 1] = reader.ts._y
-        self._coordinates[:, 2] = reader.ts._z
+        if not HAS_MDA and not HAS_MDT:
+            raise TypeError('MDAnalysis or mdtraj required in order to load a DCD file.')
 
-        super(DCD, self)._parse()
+        if HAS_MDA:
+            reader = mda.coordinates.DCD.DCDReader(self._fh.name)
+            self._hmat = geo.abc_to_hmatrix(*reader.ts.dimensions, degrees=True)
+            self._coordinates = np.zeros((reader.ts.numatoms, 3))
+            self._coordinates[:, 0] = reader.ts._x
+            self._coordinates[:, 1] = reader.ts._y
+            self._coordinates[:, 2] = reader.ts._z
+
+            super(DCD, self)._parse()
+            return
+
+        if HAS_MDT:
+            # ugly workaround for the requirement of a topology for a DCD file
+            top = mdt.Topology()
+            top._numAtoms = None
+            try:
+                trajectory = mdt.load_dcd(self._fh.name, frame=0, top=top)
+            except ValueError as e:
+                numatoms = int(re.findall('\(([^()]*)\)', str(e))[0])
+            top._numAtoms = numatoms
+            trajectory = mdt.load_dcd(self._fh.name, frame=0, top=top)
+            self._coordinates = trajectory.xyz[0]
+            self._hmat = trajectory.unitcell_vectors * 10
+
+            super(DCD, self)._parse()
+            return
 
     @require_loaded
     @require_parsed

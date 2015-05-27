@@ -9,13 +9,15 @@ Supported File Formats
 ----------------------
 
 Most of the file formats require external python packages like MDAnalysis or mdtraj. Only native formats can be
-used without any further packages.
+used without any further packages. If more than one package is listed in the table for a single file format, then any of
+the listed packages will be sufficient. If there are more than one of the optional packages installed the order in which
+they are used is undefined.
 
 ====== ===================== ===================== =========
 Format Input                 Output                Extension
 ====== ===================== ===================== =========
 XYZ    Native                Native                .xyz
-DCD    MDAnalysis            --                    .dcd
+DCD    MDAnalysis, mdtraj    --                    .dcd
 ====== ===================== ===================== =========
 
 Command Line Interface
