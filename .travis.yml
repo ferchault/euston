@@ -5,9 +5,15 @@ python:
 install:
   - pip install --upgrade pip
   - pip install -e src
+# mdtraj
   - pip install cython
   - pip install mdtraj
-  - pip install -q -r config/requirements.txt
+# MDAnalysis
+  - pip install MDAnalysis
+# Coverage testing and documentation
+  - pip install coveralls
+  - pip install sphinx
+  - pip install sphinx-bootstrap-theme
 cache:
   directories:
     - $HOME/.cache/pip

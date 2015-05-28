@@ -1,4 +1,0 @@
-coveralls
-sphinx
-sphinx-bootstrap-theme
-MDAnalysis
