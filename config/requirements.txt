@@ -1,3 +1,5 @@
 coveralls
 sphinx
 sphinx-bootstrap-theme
+mdtraj
+MDAnalysis
