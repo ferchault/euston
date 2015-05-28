@@ -6,10 +6,10 @@ install:
   - pip install --upgrade pip
   - pip install -e src
 # mdtraj
-  - pip install cython
+  - pip install --no-use-wheel cython
   - pip install --no-use-wheel mdtraj
 # MDAnalysis
-  - pip install MDAnalysis
+  - pip install --no-use-wheel MDAnalysis
 # Coverage testing and documentation
   - pip install coveralls
   - pip install sphinx
