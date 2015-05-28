@@ -14,9 +14,9 @@ try:
     HAS_MDA = True
 except:
     HAS_MDA = False
+import mdtraj as mdt
 try:
     import mdtraj as mdt
-    import re # needed for DCD file reading workaround
     HAS_MDT = True
 except:
     HAS_MDT = False
