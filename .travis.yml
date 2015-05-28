@@ -3,8 +3,9 @@ python:
   - "2.7"
   - "2.6"
 install:
+  - pip install --upgrade pip
   - pip install -e src
-  - pip install -q -r config/requirements.txt --use-mirrors
+  - pip install -q -r config/requirements.txt
 script:
   - cd src
   - coverage run --rcfile=../config/coverage.conf setup.py test
