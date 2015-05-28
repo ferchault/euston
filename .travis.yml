@@ -7,7 +7,7 @@ install:
   - pip install -e src
 # mdtraj
   - pip install cython
-  - pip install mdtraj
+  - pip install --no-use-wheel mdtraj
 # MDAnalysis
   - pip install MDAnalysis
 # Coverage testing and documentation
