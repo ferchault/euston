@@ -14,15 +14,14 @@ class TestGeometry(unittest.TestCase):
         self.assertEqual(0, np.rad2deg(geo._angle_between(a, a)))
         self.assertEqual(180, np.rad2deg(geo._angle_between(a, -a)))
 
-    #def test_hmatabc(self):
-    #    """Tests whether alternating conversions are stable."""
-    #    def _docheck(self, test):
-    #        abc = np.array(test)
-    #        result = geo.hmatrix_to_abc(geo.abc_to_hmatrix(*abc, degrees=True), degrees=True)
-    #        print np.array(test)-result
-    #        self.assertTrue(np.allclose(np.array(test), result))
+    def test_hmatabc(self):
+        """Tests whether alternating conversions are stable."""
+        def _docheck(self, test):
+            abc = np.array(test)
+            result = geo.hmatrix_to_abc(geo.abc_to_hmatrix(*abc, degrees=True), degrees=True)
+            self.assertTrue(np.allclose(np.array(test), result))
 
-    #    _docheck(self, [1.1, 2.2, 3.3, 90,90,120])
-    #    _docheck(self, [1.1, 2.2, 3.3, 90,90,90])
+        _docheck(self, [1.1, 2.2, 3.3, 90,90,120])
+        _docheck(self, [1.1, 2.2, 3.3, 90,90,90])
         # triclinic: Chalcanthite
-    #    _docheck(self, [6.12, 10.72, 5.96, 82.4,107.3,102.6])
+        _docheck(self, [6.11, 10.673, 5.95, 97.58, 107.17, 77.55])

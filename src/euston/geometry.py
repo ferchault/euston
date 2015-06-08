@@ -37,7 +37,7 @@ def abc_to_hmatrix(a, b, c, alpha, beta, gamma, degrees=True):
     a = np.array((a, 0, 0))
     b = b*np.array((math.cos(gamma), math.sin(gamma),0))
     bracket = (math.cos(alpha)-math.cos(beta)*math.cos(gamma))/math.sin(gamma)
-    c = c*np.array((math.cos(beta), bracket, math.sin(beta)**2-bracket**2))
+    c = c*np.array((math.cos(beta), bracket, math.sqrt(math.sin(beta)**2-bracket**2)))
 
     result[:, 0] = a
     result[:, 1] = b
