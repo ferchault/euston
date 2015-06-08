@@ -21,7 +21,18 @@ class TestGeometry(unittest.TestCase):
             result = geo.hmatrix_to_abc(geo.abc_to_hmatrix(*abc, degrees=True), degrees=True)
             self.assertTrue(np.allclose(np.array(test), result))
 
-        _docheck(self, [1.1, 2.2, 3.3, 90,90,120])
-        _docheck(self, [1.1, 2.2, 3.3, 90,90,90])
+        # cubic: Sodium Chloride
+        _docheck(self, [5.6402, 5.6402, 5.6402, 90, 90, 90])
+        # tetragonal: Rutile
+        _docheck(self, [4.5937, 4.5937, 2.9587, 90, 90, 90])
+        # orthorhombic: alpha sulphur
+        _docheck(self, [10.4646, 12.8660, 24.4860, 90, 90, 90])
+        # hexagonal: Graphite
+        _docheck(self, [2.461, 2.461, 6.708, 90, 90, 120])
+        # trigonal
+        _docheck(self, [4.5, 4.5, 4.5, 88, 88, 88])
+        # monoclinic: Gypsum
+        _docheck(self, [5.679, 15.202, 6.522, 90, 90, 118.43])
         # triclinic: Chalcanthite
         _docheck(self, [6.11, 10.673, 5.95, 97.58, 107.17, 77.55])
+
