@@ -6,11 +6,10 @@ import numpy as np
 def _angle_between(a, b):
     a = np.copy(np.array(a))
     b = np.copy(np.array(b))
-    try:
-        a /= np.linalg.norm(a)
-        b /= np.linalg.norm(b)
-    except:
+    if np.linalg.norm(a) == 0 or np.linalg.norm(b) == 0:
         raise ValueError('Got zero vector.')
+    a /= np.linalg.norm(a)
+    b /= np.linalg.norm(b)
     angle = np.arccos(np.dot(a, b))
     if np.isnan(angle):
         if (a == b).all():
