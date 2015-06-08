@@ -11,7 +11,10 @@ def _angle_between(a, b):
     a /= np.linalg.norm(a)
     b /= np.linalg.norm(b)
     angle = np.arccos(np.dot(a, b))
+
     if np.isnan(angle):
+        if np.isnan(np.min(a)) or np.isnan(np.min(b)):
+            raise ValueError('NaN in vectors.')
         if (a == b).all():
             return 0.0
         else:
@@ -49,7 +52,7 @@ def repeat_vector(h_matrix, repeat_a, repeat_b, repeat_c):
     return h_matrix[:, 0]*repeat_a + h_matrix[:, 1]*repeat_b + h_matrix[:, 2]*repeat_c
 
 def box_vertices(h_matrix, repeat_a, repeat_b, repeat_c):
-    vertices = np.zeros(8, 3)
+    vertices = np.zeros((8, 3))
     vertices[0, :] = repeat_vector(h_matrix, repeat_a, repeat_b, repeat_c)
     vertices[1, :] = repeat_vector(h_matrix, repeat_a, repeat_b, repeat_c+1)
     vertices[2, :] = repeat_vector(h_matrix, repeat_a, repeat_b+1, repeat_c)
