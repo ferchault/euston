@@ -8,7 +8,8 @@ parser = argparse.ArgumentParser(description='Reads CP2K PDOS files')
 parser.add_argument('file', type=argparse.FileType('r'), help='PDOS output file to read.')
 
 # range options
-parser.add_argument('--limit', default=-1, type=int, help='The maximum number of frames to read from the PDOS files. 0 = no limit.')
+parser.add_argument('--limit', default=-1, type=int, help='The maximum number of frames to read from the PDOS files. Includes skipped frames. -1 = no limit.')
+parser.add_argument('--skip', default=0, type=int, help='The number of frames to skip from the beginning of the PDOS files. 0 = none.')
 
 # action options
 parser.add_argument('--orbital_center', default=None, type=str, help='Calculate the occupied center for these orbitals.')
@@ -149,22 +150,26 @@ class Cp2kPdosFrame(object):
 		return self._data[1]-relative_fermi*self._fermi, np.sum(self._data[3:], axis=0)
 
 class Cp2kPdosFile(object):
-	def __init__(self, fh, limit=0):
+	def __init__(self, fh, limit=0, skip=0):
 		self._frames = []
 		t_lines = []
 
 		if fh.name[-3:] == '.gz':
 			fh = gzip.GzipFile(fileobj=fh)
+
+		read_frames = 0
 		for line in fh:
 			if line.startswith('# ') and len(t_lines) > 1:
-				self._frames.append(Cp2kPdosFrame(t_lines))
+				read_frames += 1
+				if read_frames > skip:
+					self._frames.append(Cp2kPdosFrame(t_lines))
 				t_lines = []
 
-			if len(self) == limit and limit != 0:
+			if read_frames == limit and limit != 0:
 				break
 
 			t_lines.append(line)
-		if len(self) < limit or limit == -1:
+		if (read_frames < limit or limit == -1) and read_frames > skip:
 			self._frames.append(Cp2kPdosFrame(t_lines))
 		fh.close()
 
@@ -237,18 +242,18 @@ def main():
 	pdos = Cp2kPdosFile(args.file, limit=args.limit)
 	# fermi level from seperate file?
 	if args.relative_fermi and args.fermi_file != None:
-		fermi = Cp2kPdosFile(args.fermi_file, limit=args.limit)
+		fermi = Cp2kPdosFile(args.fermi_file, limit=args.limit, skip=args.skip)
 		pdos.take_fermi_from(fermi)
 
 	# merge / split in the beginning
 	if args.add is not None:
 		for pdosfile in args.add:
-			tpdos = Cp2kPdosFile(pdosfile, limit=args.limit)
+			tpdos = Cp2kPdosFile(pdosfile, limit=args.limit, skip=args.skip)
 			pdos.join(tpdos)
 			names.append(pdosfile.name)
 	if args.subtract is not None:
 		for pdosfile in args.subtract:
-			tpdos = Cp2kPdosFile(pdosfile, limit=args.limit)
+			tpdos = Cp2kPdosFile(pdosfile, limit=args.limit, skip=args.skip)
 			pdos.projectout(tpdos)
 			names.append(pdosfile.name)
 
