@@ -81,14 +81,18 @@ class TestGeometry(unittest.TestCase):
 				for system in bravais_lattices:
 					hmat = geo.abc_to_hmatrix(*system)
 					result = geo.cell_multiply(base, 1, 1, 2, h_matrix=hmat, scaling_in=sc_in, scaling_out=sc_out)
+					result2 = geo.cell_multiply(base, 1, 1, 1, h_matrix=hmat, scaling_in=sc_in, scaling_out=True)
+					result2 *= np.array([1, 1, 0.5])
 					reference = np.copy(base)
+					hmat[:, 2] *= 2
+
+					# convert to cartesian coordinates
 					if sc_in:
 						reference = geo.scaled_to_cartesian_coordinates(reference, hmat)
 					if sc_out:
 						result = geo.scaled_to_cartesian_coordinates(result, hmat)
+					result2 = geo.scaled_to_cartesian_coordinates(result2, hmat)
+
 					# single result part of multiplied result
-					result2 = geo.cell_multiply(base, 1, 1, 1, h_matrix=hmat, scaling_in=sc_in, scaling_out=False)
-					result2 *= np.array([1, 1, 0.5])
 					residuals = np.linalg.norm(result - result2[0], axis=1)
-				# print min(residuals)
-				#self.assertTrue(min(residuals) < 10e-5)
+					self.assertTrue(min(residuals) < 10e-5)

@@ -92,6 +92,9 @@ def cell_multiply(coord, x, y, z, h_matrix=None, scaling_in=False, scaling_out=F
 		if i < 1 or int(i) != i:
 			raise ValueError('Invalid image count.')
 
+	# copy input
+	coord = np.copy(coord)
+
 	# prepare data
 	factor = x * y * z
 	atoms = coord.shape[0]
@@ -105,6 +108,7 @@ def cell_multiply(coord, x, y, z, h_matrix=None, scaling_in=False, scaling_out=F
 				raise TypeError('H matrix has to be given for partially cartesian data.')
 			coord = cartesian_to_scaled_coordinates(coord, h_matrix)
 		newcoord[:atoms] = coord
+
 		for i_x in range(x):
 			for i_y in range(y):
 				for i_z in range(z):
