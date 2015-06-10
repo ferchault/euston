@@ -8,24 +8,31 @@ parser = argparse.ArgumentParser(description='Reads CP2K PDOS files')
 parser.add_argument('file', type=argparse.FileType('r'), help='PDOS output file to read.')
 
 # range options
-parser.add_argument('--limit', default=-1, type=int, help='The maximum number of frames to read from the PDOS files. Includes skipped frames. -1 = no limit.')
-parser.add_argument('--skip', default=0, type=int, help='The number of frames to skip from the beginning of the PDOS files. 0 = none.')
+parser.add_argument('--limit', default=-1, type=int,
+					help='The maximum number of frames to read from the PDOS files. Includes skipped frames. -1 = no limit.')
+parser.add_argument('--skip', default=0, type=int,
+					help='The number of frames to skip from the beginning of the PDOS files. 0 = none.')
 
 # action options
-parser.add_argument('--orbital_center', default=None, type=str, help='Calculate the occupied center for these orbitals.')
-parser.add_argument('--orbital_cutoff', default=-1, type=float, help='Exclude orbitals with eigenvalues below this value. Unit: Hartree.')
+parser.add_argument('--orbital_center', default=None, type=str,
+					help='Calculate the occupied center for these orbitals.')
+parser.add_argument('--orbital_cutoff', default=-1, type=float,
+					help='Exclude orbitals with eigenvalues below this value. Unit: Hartree.')
 parser.add_argument('--visualise', action='store_true', help='Whether to visualise the results with matplotlib.')
 parser.add_argument('--relative_fermi', action='store_true', help='Whether to shift all values such that E_Fermi = 0.')
 parser.add_argument('--relative_homo', action='store_true', help='Whether to shift all values such that E_HOMO = 0.')
 parser.add_argument('--fermi_file', type=file, help='PDOS file to read the Fermi level from for each frame.')
 parser.add_argument('--add', type=file, nargs='+', help='PDOS files to combine (same orbitals are merged)')
-parser.add_argument('--subtract', type=file, nargs='+', help='PDOS files to combine with inverted sign (same orbitals are merged)')
+parser.add_argument('--subtract', type=file, nargs='+',
+					help='PDOS files to combine with inverted sign (same orbitals are merged)')
 parser.add_argument('--dos', action='store_true', help='Calculate the DOS averaged over a set of frames.')
-parser.add_argument('--dos_cutoff', default=-1, type=float, help='Exclude orbitals with eigenvalues below this value. Unit: Hartree.')
+parser.add_argument('--dos_cutoff', default=-1, type=float,
+					help='Exclude orbitals with eigenvalues below this value. Unit: Hartree.')
 parser.add_argument('--dos_smear', default=0.01, type=float, help='Gaussian smearing of the DOS. Unit: eV.')
 parser.add_argument('--binwidth', default=0.01, type=float, help='Binwidth for DOS histograms. Unit: eV.')
 parser.add_argument('--trace', default=0, type=int, help='Numbers of HOMO states to trace.')
 parser.add_argument('--reduce', action='store_true', help='Joining all orbitals into one occupation.')
+
 
 class Cp2kPdosFrame(object):
 	_iterstep = None
@@ -44,7 +51,7 @@ class Cp2kPdosFrame(object):
 			self._fermi = None
 
 		self._labels = lines[1].split()[5:]
-		self._data = np.zeros((len(self._labels)+3, len(lines)-2))
+		self._data = np.zeros((len(self._labels) + 3, len(lines) - 2))
 		for idx, line in enumerate(lines[2:]):
 			self._data[:, idx] = map(float, line.split())
 
@@ -55,10 +62,10 @@ class Cp2kPdosFrame(object):
 			except:
 				this_idx = len(self._labels)
 				self._labels.append(orbital)
-				data = np.zeros((self._data.shape[0]+1, self._data.shape[1]))
+				data = np.zeros((self._data.shape[0] + 1, self._data.shape[1]))
 				data[:-1, :] = self._data
 				self._data = data
-			self._data[this_idx+3, :] += other._data[idx+3, :]
+			self._data[this_idx + 3, :] += other._data[idx + 3, :]
 
 	def _get_indices(self, orbital):
 		if orbital == '*':
@@ -82,7 +89,7 @@ class Cp2kPdosFrame(object):
 		return self._data.shape[1]
 
 	def invert(self):
-		self._data[1:, :] *= -1		
+		self._data[1:, :] *= -1
 
 	def center(self, orbital, cutoff, relative_fermi):
 		try:
@@ -107,10 +114,10 @@ class Cp2kPdosFrame(object):
 			validfilter = self._data[2] == 0
 		validfilter *= self._data[1] > cutoff
 
-		weights = np.sum(self._data[idxs+3, :]*validfilter, axis=1)
-		vals = np.sum(self._data[idxs+3, :]*validfilter*self._data[1], axis=1)
-		return (np.sum(vals) / np.sum(weights)) - relative_fermi*self._fermi
-	
+		weights = np.sum(self._data[idxs + 3, :] * validfilter, axis=1)
+		vals = np.sum(self._data[idxs + 3, :] * validfilter * self._data[1], axis=1)
+		return (np.sum(vals) / np.sum(weights)) - relative_fermi * self._fermi
+
 	def histogram(self, orbital, bin, cutoff, relative_fermi):
 		try:
 			orbital, selection = orbital.split('.')
@@ -121,15 +128,14 @@ class Cp2kPdosFrame(object):
 		except ValueError:
 			raise ValueError('Orbital %s not in iteration step %d' % (orbital, self._iterstep))
 
-		
 		validfilter = self._data[1] > cutoff
 		energies = self._data[1] - relative_fermi * self._fermi
-		weights = np.sum(self._data[idxs+3, :], axis=0)
+		weights = np.sum(self._data[idxs + 3, :], axis=0)
 		mval = max(cutoff, energies.min())
 		weights *= validfilter
 
 		if isinstance(bin, float):
-			bins = np.linspace(mval, energies.max(), (energies.max()-mval)/bin)
+			bins = np.linspace(mval, energies.max(), (energies.max() - mval) / bin)
 		else:
 			bins = np.array(bin)
 
@@ -142,12 +148,13 @@ class Cp2kPdosFrame(object):
 	def get_trace(self, nhomo, relative_fermi, relative_homo):
 		rows = np.where(self._data[2, :] == 1)[0][-nhomo:]
 		sel = self._data[:, rows]
-		energies = sel[1] - relative_fermi*self._fermi - relative_homo*sel[1][-1]
+		energies = sel[1] - relative_fermi * self._fermi - relative_homo * sel[1][-1]
 		occupations = np.sum(sel[3:], axis=0)
 		return energies[::-1], occupations[::-1]
 
 	def reduce(self, relative_fermi):
-		return self._data[1]-relative_fermi*self._fermi, np.sum(self._data[3:], axis=0)
+		return self._data[1] - relative_fermi * self._fermi, np.sum(self._data[3:], axis=0)
+
 
 class Cp2kPdosFile(object):
 	def __init__(self, fh, limit=0, skip=0):
@@ -193,7 +200,7 @@ class Cp2kPdosFile(object):
 	def join(self, other):
 		for idx in range(len(other._frames)):
 			self._frames[idx].join(other._frames[idx])
-	
+
 	def dos(self, bin, cutoff, relative_fermi, smear):
 		orbitals = '*'
 		hs, bins = self._frames[0].histogram('*', bin, cutoff, relative_fermi)
@@ -201,9 +208,9 @@ class Cp2kPdosFile(object):
 			t, _ = frame.histogram('*', bins, cutoff, relative_fermi)
 			hs += t
 		hs /= len(self)
-		xs = (bins[1:]+bins[:-1])/2
+		xs = (bins[1:] + bins[:-1]) / 2
 		xs2 = xs - np.average(xs)
-		gs = np.exp(-xs2**2/(2*smear**2))/(smear*np.sqrt(2*np.pi))
+		gs = np.exp(-xs2 ** 2 / (2 * smear ** 2)) / (smear * np.sqrt(2 * np.pi))
 		smeared = np.convolve(hs, gs, mode='same')
 		return xs, hs, smeared
 
@@ -222,7 +229,7 @@ class Cp2kPdosFile(object):
 	def trace(self, nhomo, relative_fermi, relative_homo):
 		if relative_homo and relative_fermi:
 			raise ValueError('Only one reference value allowed: got Fermi and HOMO')
-		results = np.zeros((len(self), 1+nhomo*2))
+		results = np.zeros((len(self), 1 + nhomo * 2))
 
 		for frame in range(len(self)):
 			results[frame, 0] = frame
@@ -235,6 +242,7 @@ class Cp2kPdosFile(object):
 		if len(self) > 1:
 			print '# WARNING: ONLY TAKING FIRST FRAME INTO ACCCOUNT'
 		return self._frames[0].reduce(relative_fermi)
+
 
 def main():
 	args = parser.parse_args()
@@ -266,25 +274,28 @@ def main():
 	if args.orbital_center is not None:
 		itersteps, data = pdos.center(args.orbital_center, args.orbital_cutoff, args.relative_fermi)
 		for i, e in zip(itersteps, data):
-			print i, 
+			print i,
 			for t in e:
 				print t,
 			print
 		if args.visualise:
-			import matplotlib.pyplot as plt 
+			import matplotlib.pyplot as plt
+
 			scount, ocount = data.shape
 			for idx in range(ocount):
 				plt.plot(range(scount), data[:, idx])
 			plt.show()
 	if args.dos:
-		xs, hs, gs = pdos.dos(args.binwidth/27.21138505, args.dos_cutoff, args.relative_fermi, args.dos_smear/27.21138505)		
+		xs, hs, gs = pdos.dos(args.binwidth / 27.21138505, args.dos_cutoff, args.relative_fermi,
+							  args.dos_smear / 27.21138505)
 		xs *= 27.21138505
 		for x, h, g in zip(xs, hs, gs):
 			print x, h, g
 		if args.visualise:
 			import matplotlib.pyplot as plt
-			plt.plot(xs, -hs/hs.max())
-			plt.plot(xs, gs/gs.max())
+
+			plt.plot(xs, -hs / hs.max())
+			plt.plot(xs, gs / gs.max())
 			plt.show()
 	if args.trace != 0:
 		results = pdos.trace(args.trace, args.relative_fermi, args.relative_homo)
@@ -293,13 +304,14 @@ def main():
 		for frame in results:
 			for e in frame:
 				print e,
-			print 
+			print
 	if args.reduce != 0:
 		energies, res = pdos.reduce(args.relative_fermi)
 		energies *= 27.21138505
 		for i, e in enumerate(zip(energies, res)):
 			e, v = e
 			print i, e, v
+
 
 if __name__ == '__main__':
 	main()

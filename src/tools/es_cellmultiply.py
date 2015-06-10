@@ -79,64 +79,68 @@ parser.add_argument('--Y', type=int, help='Y repeat', default=1)
 parser.add_argument('--Z', type=int, help='Z repeat', default=1)
 parser.add_argument('--sc_in', action='store_true', help='Whether the input file contains scaled coordinates.')
 parser.add_argument('--sc_out', action='store_true', help='Whether the output file should contain scaled coordinates.')
-parser.add_argument('--hmat', type=str, help='H matrix (cell vectors in columns). Comma-separated in row-first notation without spaces.')
+parser.add_argument('--hmat', type=str,
+					help='H matrix (cell vectors in columns). Comma-separated in row-first notation without spaces.')
 parser.add_argument('--abc', type=str, help='a, b, c, alpha, beta, gamma. Comma-separated without spaces.')
 parser.add_argument('--radians', action='store_true', help='Whether angles in --abc are given in radians.')
 
+
 def main(args):
-    """
-    Main routine wrapper.
+	"""
+	Main routine wrapper.
 
-    :param args: Arguments as from argparse.ArgumentParser.parse_args
-    """
+	:param args: Arguments as from argparse.ArgumentParser.parse_args
+	"""
 
-    inputfile = io.anyopen(args.input)
-    if not isinstance(inputfile, io.HoldsCoordinates):
-        print 'Input file has to contain atom positions.'
+	inputfile = io.anyopen(args.input)
+	if not isinstance(inputfile, io.HoldsCoordinates):
+		print 'Input file has to contain atom positions.'
 
-    hmat = None
-    if isinstance(inputfile, io.HoldsUnitcell):
-        hmat = inputfile.get_h_matrix()
+	hmat = None
+	if isinstance(inputfile, io.HoldsUnitcell):
+		hmat = inputfile.get_h_matrix()
 
-    if not (args.sc_in and args.sc_out) and (hmat is None):
-        if (args.hmat is None and args.abc is None) or (args.hmat is not None and args.abc is not None):
-            print 'Please specify either the H matrix or lattice constants unless input and output are scaled.'
-            exit(1)
+	if not (args.sc_in and args.sc_out) and (hmat is None):
+		if (args.hmat is None and args.abc is None) or (args.hmat is not None and args.abc is not None):
+			print 'Please specify either the H matrix or lattice constants unless input and output are scaled.'
+			exit(1)
 
-        if args.hmat is not None:
-            try:
-                hmat = map(float, args.hmat.split(','))
-            except:
-                print 'Invalid H matrix entries.'
-                exit(2)
-            hmat = np.array(hmat).reshape((3,3)).T
+		if args.hmat is not None:
+			try:
+				hmat = map(float, args.hmat.split(','))
+			except:
+				print 'Invalid H matrix entries.'
+				exit(2)
+			hmat = np.array(hmat).reshape((3, 3)).T
 
-        if args.abc is not None:
-            try:
-                abc = map(float, args.abc.split(','))
-            except:
-                print 'Invalid abc entries.'
-                exit(3)
-            if len(abc) != 6:
-                print 'Not enough entries for cell lengths.'
-                exit(5)
-            hmat = geo.abc_to_hmatrix(*abc, degrees=(not args.radians))
+		if args.abc is not None:
+			try:
+				abc = map(float, args.abc.split(','))
+			except:
+				print 'Invalid abc entries.'
+				exit(3)
+			if len(abc) != 6:
+				print 'Not enough entries for cell lengths.'
+				exit(5)
+			hmat = geo.abc_to_hmatrix(*abc, degrees=(not args.radians))
 
-    for images in (args.X, args.Y, args.Z):
-        if images < 1:
-            print 'Invalid multiplier setting - has to be at least one.'
-            exit(4)
+	for images in (args.X, args.Y, args.Z):
+		if images < 1:
+			print 'Invalid multiplier setting - has to be at least one.'
+			exit(4)
 
-    multiplied = geo.cell_multiply(inputfile.get_coordinates(), args.X, args.Y, args.Z, h_matrix=hmat, scaling_in=args.sc_in, scaling_out=args.sc_out)
-    factor = args.X*args.Y*args.Z
+	multiplied = geo.cell_multiply(inputfile.get_coordinates(), args.X, args.Y, args.Z, h_matrix=hmat,
+								   scaling_in=args.sc_in, scaling_out=args.sc_out)
+	factor = args.X * args.Y * args.Z
 
-    output = io.XYZ()
-    try:
-        labels = inputfile.get_labels()
-    except:
-        labels = ['X'] * inputfile.get_coordinates().shape[0]
-    output.set_data(labels*factor, multiplied)
-    io.write_lines(args.output, output.to_string())
+	output = io.XYZ()
+	try:
+		labels = inputfile.get_labels()
+	except:
+		labels = ['X'] * inputfile.get_coordinates().shape[0]
+	output.set_data(labels * factor, multiplied)
+	io.write_lines(args.output, output.to_string())
+
 
 if __name__ == '__main__':
-    main(parser.parse_args())
+	main(parser.parse_args())

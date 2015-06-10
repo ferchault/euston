@@ -49,48 +49,50 @@ parser.add_argument('--absolute', action='store_true', help='Whether to sum abso
 parser.add_argument('--pervolume', action='store_true', help='Give projected value per slice volume.')
 parser.add_argument('--perpoint', action='store_true', help='Give projected value per data point in slice.')
 
+
 def main(parser):
-    """
-    Main routine wrapper.
+	"""
+	Main routine wrapper.
 
-    :param argparse.ArgumentParser parser: Argument parser
-    """
-    args = parser.parse_args()
+	:param argparse.ArgumentParser parser: Argument parser
+	"""
+	args = parser.parse_args()
 
-    if args.index not in range(3):
-        raise ValueError('Axes index invalid.')
+	if args.index not in range(3):
+		raise ValueError('Axes index invalid.')
 
-    print 'Reading cubefile...                 ',
-    cube = io.CubeFile(args.filename)
-    print 'Completed, %d atoms %d voxels.      ' % (cube.count_atoms(), cube.count_voxels())
+	print 'Reading cubefile...                 ',
+	cube = io.CubeFile(args.filename)
+	print 'Completed, %d atoms %d voxels.      ' % (cube.count_atoms(), cube.count_voxels())
 
-    print 'Calculating slice volume...         ',
-    h_mat = cube.get_h_matrix()
-    abc = geom.hmatrix_to_abc(h_mat)
-    if args.index == 0:
-        slicecount = cube.get_xlen()
-    elif args.index == 1:
-        slicecount = cube.get_ylen()
-    else:
-        slicecount = cube.get_zlen()
-    slicevolume = geom.cell_volume(h_mat) / slicecount
-    print 'Completed, %d slices of %f Angstrom^3 each.' % (slicecount, slicevolume)
+	print 'Calculating slice volume...         ',
+	h_mat = cube.get_h_matrix()
+	abc = geom.hmatrix_to_abc(h_mat)
+	if args.index == 0:
+		slicecount = cube.get_xlen()
+	elif args.index == 1:
+		slicecount = cube.get_ylen()
+	else:
+		slicecount = cube.get_zlen()
+	slicevolume = geom.cell_volume(h_mat) / slicecount
+	print 'Completed, %d slices of %f Angstrom^3 each.' % (slicecount, slicevolume)
 
-    fh = open(args.output, 'w')
-    print 'Summing voxel along axis...         ',
-    proj = cube.get_projection(args.index, args.absolute)
-    if args.pervolume:
-        fh.write('# Normalised by slice volume.\n')
-        proj /= slicevolume
-    if args.perpoint:
-        fh.write('# Normalised by data point count per slice.\n')
-        proj /= (cube.count_voxels()/len(proj))
-    print 'Completed.'
+	fh = open(args.output, 'w')
+	print 'Summing voxel along axis...         ',
+	proj = cube.get_projection(args.index, args.absolute)
+	if args.pervolume:
+		fh.write('# Normalised by slice volume.\n')
+		proj /= slicevolume
+	if args.perpoint:
+		fh.write('# Normalised by data point count per slice.\n')
+		proj /= (cube.count_voxels() / len(proj))
+	print 'Completed.'
 
-    fh.write('# index, centered bin position along cell vector, cube data unit per aforementioned units\n')
-    for idx, e in enumerate(proj):
-        fh.write('%d %f %f\n' % (idx, abc[args.index] / slicecount * (idx+0.5), e))
-    fh.close()
+	fh.write('# index, centered bin position along cell vector, cube data unit per aforementioned units\n')
+	for idx, e in enumerate(proj):
+		fh.write('%d %f %f\n' % (idx, abc[args.index] / slicecount * (idx + 0.5), e))
+	fh.close()
+
 
 if __name__ == '__main__':
-    main(parser)
+	main(parser)

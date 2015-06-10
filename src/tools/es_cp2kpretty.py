@@ -30,6 +30,7 @@ parser = argparse.ArgumentParser(description='Pretty-prints CP2K input files.')
 parser.add_argument('input', type=str, help='CP2K input filename')
 parser.add_argument('output', type=str, help='CP2K output filename')
 
+
 def main(parser):
 	"""
 	Main routine wrapper.
@@ -41,6 +42,7 @@ def main(parser):
 	cp2k = io.Cp2kInput(args.input)
 	lines = cp2k.to_string(args.output)
 	io.write_lines(args.output, lines)
+
 
 if __name__ == '__main__':
 	main(parser)
