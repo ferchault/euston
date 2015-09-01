@@ -3,8 +3,16 @@
 import math
 import numpy as np
 
-
 def _angle_between(a, b):
+	""" Calculates the angle between two vectors safely.
+
+	:param a: First input vector
+	:type a: Iterable or numpy array of length 3
+	:param b: Second input vector
+	:type b: Iterable or numpy array of length 3
+	:return: Angle
+	:rtype: Radians
+	"""
 	a = np.copy(np.array(a))
 	b = np.copy(np.array(b))
 	if np.linalg.norm(a) == 0 or np.linalg.norm(b) == 0:
@@ -22,8 +30,16 @@ def _angle_between(a, b):
 			return np.pi
 	return angle
 
-
 def hmatrix_to_abc(h_matrix, degrees=False):
+	""" H matrix representation as box lengths and box angles.
+
+	:param h_matrix: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:type h_matrix: Numpy array of shape (3, 3)
+	:param degrees: Switch to return angles in degrees instead of radians.
+	:type degrees: Boolean
+	:return: Box specification following a, b, c, alpha, beta, gamma. Distances in Angstrom.
+	:rtype: Numpy array of length 6
+	"""
 	result = np.zeros(6)
 	for i in range(3):
 		result[i] = np.linalg.norm(h_matrix[:, i])
@@ -34,8 +50,26 @@ def hmatrix_to_abc(h_matrix, degrees=False):
 		result[3:] = map(math.degrees, result[3:])
 	return result
 
-
 def abc_to_hmatrix(a, b, c, alpha, beta, gamma, degrees=True):
+	""" Box vectors from box vector lengths and box vector angles.
+
+	:param a: First box vector length in Angstrom.
+	:type a: Float
+	:param b: Second box vector length in Angstrom.
+	:type b: Float
+	:param c: Third box vector length in Angstrom.
+	:type c: Float
+	:param alpha: Fist box angle in radians.
+	:type alpha: Float
+	:param beta: Second box angle in radians.
+	:type beta: Float
+	:param gamma: Third box angle in radians.
+	:type gamma: Float
+	:param degrees: Switch to accept input angles in degrees.
+	:type degrees: Boolean
+	:return: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:rtype: Numpy array of shape (3, 3)
+	"""
 	if degrees:
 		alpha, beta, gamma = map(math.radians, (alpha, beta, gamma))
 	result = np.zeros((3, 3))
@@ -51,10 +85,21 @@ def abc_to_hmatrix(a, b, c, alpha, beta, gamma, degrees=True):
 
 	return result
 
-
 def repeat_vector(h_matrix, repeat_a, repeat_b, repeat_c):
-	return h_matrix[:, 0] * repeat_a + h_matrix[:, 1] * repeat_b + h_matrix[:, 2] * repeat_c
+	""" Builds a cartesian vector from a vector in the vector space created by the box vectors.
 
+	:param h_matrix: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:type h_matrix: Numpy array of shape (3, 3)
+	:param repeat_a: First coordinate in box vector coordinate system.
+	:type repeat_a: Float
+	:param repeat_b: Second coordinate in box vector coordinate system.
+	:type repeat_b: Float
+	:param repeat_c: Second coordinate in box vector coordinate system.
+	:type repeat_c: Float
+	:return: Cartesian vector. Unit of length: Angstrom.
+	:rtype: Numpy array of length 3
+	"""
+	return h_matrix[:, 0] * repeat_a + h_matrix[:, 1] * repeat_b + h_matrix[:, 2] * repeat_c
 
 def box_vertices(h_matrix, repeat_a, repeat_b, repeat_c):
 	vertices = np.zeros((8, 3))
