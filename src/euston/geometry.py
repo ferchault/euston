@@ -30,6 +30,24 @@ def _angle_between(a, b):
 			return np.pi
 	return angle
 
+def distance_pbc(a, b, h_matrix):
+	""" Calculates the distance between two vectors using periodic boundary conditions and the minimum image convention.
+
+	:param a: First vector
+	:type a: Numpy array of shape (3)
+	:param b: Second vector
+	:type b: Numpy array of shape (3)
+	:param h_matrix: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:type h_matrix: Numpy array of shape (3, 3)
+	:return: Distance between vectors.
+	:rtype: Float
+	"""
+	hinv = np.linalg.inv(h_matrix)
+	a_t = np.dot(hinv, a)
+	b_t = np.dot(hinv, b)
+	t_12 = b_t-a_t
+	return np.linalg.norm(np.dot(h_matrix, t_12))
+
 def hmatrix_to_abc(h_matrix, degrees=False):
 	""" H matrix representation as box lengths and box angles.
 
@@ -113,6 +131,32 @@ def box_vertices(h_matrix, repeat_a, repeat_b, repeat_c):
 	vertices[7, :] = repeat_vector(h_matrix, repeat_a + 1, repeat_b, repeat_c)
 	return vertices
 
+
+def vector_repetitions(minrval, h_matrix, index):
+	""" Calculated the number of repetitions of a cell vector needed to extend the periodic system at least to a given radius.
+
+	:param minrval: Minimum radius of the repeated system. Unit of length: Angstrom.
+	:type minrval: Float
+	:param h_matrix: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:type h_matrix: Numpy array of shape (3, 3)
+	:param index: Index of the cell vector to use. Zero-based.
+	:type index: Integer
+	:return: Number of necessary repetitions of the selected cell vector.
+	:rtype: Integer
+	"""
+	if index == 0:
+		j1, j2 = 1, 2
+	if index == 1:
+		j1, j2 = 0, 2
+	if index == 2:
+		j1, j2 = 1, 0
+	i = h_matrix[:, index]
+	j1 = h_matrix[:, j1]
+	j2 = h_matrix[:, j2]
+	value = minrval/np.linalg.norm(i)
+	value = max(value, minrval/np.linalg.norm(i+j1), minrval/np.linalg.norm(i+j2))
+	value = max(value, 2*minrval/np.linalg.norm(i-j1), 2*minrval/np.linalg.norm(i-j2))
+	return int(np.ceil(value))
 
 def cell_volume(h_matrix):
 	ab = np.cross(h_matrix[:, 0], h_matrix[:, 1])
