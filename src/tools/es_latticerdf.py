@@ -43,7 +43,7 @@ import euston.geometry as geom
 parser = argparse.ArgumentParser(
 	description='Calculates the RDF / g(r) for a periodic monoatomic lattice.')
 parser.add_argument('maxr', type=float, help='The maximum distance for the RDF.')
-parser.add_argument('lattice', type=str, help='Lattice type. Supported: fcc.')
+parser.add_argument('lattice', type=str, help='Lattice type.', choices='fcc bcc cubic'.split())
 parser.add_argument('abc', type=str, help='a, b, c, alpha, beta, gamma. Comma-separated without spaces.')
 parser.add_argument('--radians', action='store_true', help='Whether angles in --abc are given in radians.')
 
@@ -74,8 +74,14 @@ def main(parser):
 	# build primitive unit cell
 	if args.lattice == 'fcc':
 		pos = np.array(((0.,0.,0.), (0.,0.,1.), (0.,1.,1.), (0.,1.,0.), (0.,0.5,0.5),
-						(1.,0.,0.), (1.,0.,1.), (1.,1.,1.), (1.,1.,0.), (1.,0.5,0.5),
+			(1.,0.,0.), (1.,0.,1.), (1.,1.,1.), (1.,1.,0.), (1.,0.5,0.5),
 			(0.5,0.5,0.), (0.5,0.,0.5), (0.5, 1.,0.5), (0.5, 0.5, 1.)))
+	elif args.lattice == 'bcc':
+		pos = np.array(((0.,0.,0.), (0.,0.,1.), (0.,1.,1.), (0.,1.,0.),
+			(1.,0.,0.), (1.,0.,1.), (1.,1.,1.), (1.,1.,0.), (0.5,0.5,0.5)))
+	elif args.lattice == 'cubic':
+		pos = np.array(((0.,0.,0.), (0.,0.,1.), (0.,1.,1.), (0.,1.,0.),
+			(1.,0.,0.), (1.,0.,1.), (1.,1.,1.), (1.,1.,0.)))
 
 	# repeat
 	multiplied = geom.cell_multiply(pos, max_a, max_b, max_c, h_matrix=h_matrix, scaling_in=True)
