@@ -158,6 +158,7 @@ def vector_repetitions(minrval, h_matrix, index):
 	value = max(value, 2*minrval/np.linalg.norm(i-j1), 2*minrval/np.linalg.norm(i-j2))
 	return int(np.ceil(value))
 
+
 def cell_volume(h_matrix):
 	ab = np.cross(h_matrix[:, 0], h_matrix[:, 1])
 	return np.abs(np.dot(ab, h_matrix[:, 2]))
@@ -174,6 +175,25 @@ def scaled_to_cartesian_coordinates(coordinates, h_matrix):
 	for i in range(len(coordinates)):
 		coordinates[i] = (h_matrix * coordinates[i]).sum(axis=1)
 	return coordinates
+
+
+def cell_longest_diameter(h_matrix):
+	""" Calculates the length of the longest vector possible within a unit cell for a given H matrix.
+
+	:param h_matrix: H matrix with the cell vectors as columns. Unit of length: Angstrom.
+	:type h_matrix: Numpy array of shape (3, 3)
+	:return: Float
+	"""
+	a = h_matrix[:, 0]
+	b = h_matrix[:, 1]
+	c = h_matrix[:, 2]
+
+	mdist = max(np.linalg.norm(a), np.linalg.norm(b), np.linalg.norm(c))
+	mdist = max(mdist, np.linalg.norm(a+b))
+	mdist = max(mdist, np.linalg.norm(a+c))
+	mdist = max(mdist, np.linalg.norm(c+b))
+	mdist = max(mdist, np.linalg.norm(a+b+c))
+	return mdist
 
 
 def cell_multiply(coord, x, y, z, h_matrix=None, scaling_in=False, scaling_out=False):

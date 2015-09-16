@@ -47,6 +47,7 @@ parser.add_argument('lattice', type=str, help='Lattice type.', choices='fcc bcc 
 parser.add_argument('abc', type=str, help='a, b, c, alpha, beta, gamma. Comma-separated without spaces.')
 parser.add_argument('--radians', action='store_true', help='Whether angles in --abc are given in radians.')
 
+
 def main(parser):
 	"""
 	Main routine wrapper.
@@ -67,9 +68,10 @@ def main(parser):
 	h_matrix = geom.abc_to_hmatrix(*abc, degrees=(not args.radians))
 
 	# count repetitions
-	max_a = geom.vector_repetitions(args.maxr, h_matrix, 0)
-	max_b = geom.vector_repetitions(args.maxr, h_matrix, 1)
-	max_c = geom.vector_repetitions(args.maxr, h_matrix, 2)
+	maxr = (args.maxr + geom.cell_longest_diameter(h_matrix)) * 2
+	max_a = geom.vector_repetitions(maxr, h_matrix, 0)
+	max_b = geom.vector_repetitions(maxr, h_matrix, 1)
+	max_c = geom.vector_repetitions(maxr, h_matrix, 2)
 
 	# build primitive unit cell
 	if args.lattice == 'fcc':
@@ -85,14 +87,16 @@ def main(parser):
 
 	# repeat
 	multiplied = geom.cell_multiply(pos, max_a, max_b, max_c, h_matrix=h_matrix, scaling_in=True)
+	reference = geom.cell_multiply(pos, 1, 1, 1, h_matrix=h_matrix, scaling_in=True)
+	reference += geom.repeat_vector(h_matrix, max_a / 2, max_b / 2, max_c / 2)
 
 	# calculating distances
-	print 'Calculating all %d distances for the %d atoms' % ((len(multiplied)**2-len(multiplied))/2, len(multiplied))
+	print 'Calculating all %d distances' % (len(reference) * len(multiplied))
 	distances = []
-	for i in range(len(multiplied)):
-		for j in range(i+1, len(multiplied)):
+	for i in range(len(reference)):
+		for j in range(len(multiplied)):
 			# workaround: potential bug in cell_multiply giving identical coordinates
-			dist = geom.distance_pbc(multiplied[i], multiplied[j], h_matrix)
+			dist = geom.distance_pbc(reference[i], multiplied[j], h_matrix)
 			if dist < 0.01:
 				continue
 			distances.append(dist)
