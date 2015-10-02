@@ -46,6 +46,7 @@ def distance_pbc(a, b, h_matrix):
 	a_t = np.dot(hinv, a)
 	b_t = np.dot(hinv, b)
 	t_12 = b_t-a_t
+	t_12 -= np.round(t_12)
 	return np.linalg.norm(np.dot(h_matrix, t_12))
 
 def hmatrix_to_abc(h_matrix, degrees=False):

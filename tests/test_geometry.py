@@ -71,6 +71,13 @@ class TestGeometry(unittest.TestCase):
 				self.assertTrue(np.allclose(
 					geo.cartesian_to_scaled_coordinates(geo.scaled_to_cartesian_coordinates(base, hmat), hmat), base))
 
+	def test_distancepbc(self):
+		hmat = np.array([[10.23825455, -5.17090513, 3.04986372], [0., 8.85893229, -2.54570325], [0., 0., 46.75847679]])
+
+		apos = np.array([6.89615822, 5.49611568, 13.6058321])
+		bpos = np.array([-1.73797166, 5.51723909, 12.60285091])
+		self.assertAlmostEqual(geo.distance_pbc(apos, bpos, hmat), 1.89199191315)
+
 	def test_cellmultiply(self):
 		base = np.array([[0.5, 0.5, 0.5]])
 		self.assertRaises(ValueError, geo.cell_multiply, base, -1, -1, -1)
